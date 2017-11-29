@@ -65,6 +65,7 @@ function [params,forces] = setup()
 %%% It : mass moment of inertia in torsion [kg m2]
 %%% Iw : inertia moment at water line [kg m2]
 %%% vw : displaced water volume [kg3]
+%%% kc : cable pre-stress force [kg m s3]
 
 %%% Tower width assumed constant
 params.D = 5;
@@ -73,6 +74,7 @@ params.rho_w = 1100;
 params.rho_t = 7850;
 params.t = 0.1;
 params.lt = 135;
+params.fc = 89000;
 params.mn = 2.385e005;
 params.mb = 7.711e005;
 params.mt = mass_tower_of_monopile(params);
@@ -105,9 +107,9 @@ params.vw = displaced_water_volume(params);
 forces.kcx = 1.2606e005;
 forces.kcy = 1.2606e005;
 forces.kcz = 1.2606e005;
-forces.kbz = 5.0276e004;
+forces.kbz = vertical_stiffness_due_to_buoyancy(params);
 forces.khsx = hydrostatic_stiffness_due_to_fore_aft_roll(params);
 forces.khsy = hydrostatic_stiffness_due_to_fore_aft_roll(params);
-forces.ktc = 6.6853e005;
+forces.ktc = cable_stiffness_due_to_torsion(params);
 
 end
