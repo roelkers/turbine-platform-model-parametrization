@@ -50,7 +50,10 @@ function [params,forces] = setup()
 %%% mn : total mass of rotor/nacelle [kg]
 %%% mb : mass of ballast on bottom of monopile [kg]
 %%% t  : thickness of tower ring area [m]
-%%% lt  : total tower height [m]
+%%% lt : total tower height [m]
+%%% w  : weight per unit length of cable ,reduced for buoyancy [kg/m]
+%%% lc : cable length [m]
+%%% c : horizontal distance from monopile to cable seabed suspension [m] 
 %%% leb : distance from point A to B [m]
 %%% lbg : distance from point B to G [m]
 %%% lgw : distance from point G to W [m]
@@ -67,20 +70,29 @@ function [params,forces] = setup()
 %%% vw : displaced water volume [kg3]
 %%% kc : cable pre-stress force [kg m s3]
 
-%%% Tower width assumed constant
-params.D = 5;
+
+%%% Basic parameter
+params.D = 5; % Tower diameter assumed constant
 params.g = 9.81;
-params.rho_w = 1100;
+params.rho_w = 1000;
 params.rho_t = 7850;
 params.t = 0.1;
 params.lt = 135;
+params.lcg = -0.3; %rough guess
+%%% mooring cables
+params.w  = 108.63;%from jeremiahs thesis 
+params.lc = 835.5; %from jeremiahs thesis
+params.c = 837.6; %from jeremiahs thesis
 params.fc = 89000;
+params.dw = 300;
+%%%mass & inertia 
 params.mn = 2.385e005;
 params.mb = 7.711e005;
-params.mt = mass_tower_of_monopile(params);
-params.m0 = mass_whole_turbine(params);
+params.mt = 1466900; %mass_tower_of_monopile(params);
+params.m0 = 2476400; % mass_whole_turbine(params);
 params.m1 = 5.9605e-008; 
 
+params.vw = displaced_water_volume(params);
 params.lew = water_depth_monopile(params);
 params.leb = buoyancy_centre(params);
 params.leg = gravity_centre(params);
@@ -88,11 +100,10 @@ params.leg = gravity_centre(params);
 params.m2 = mass_moment_inertia_in_roll(params);
 
 params.lbg = params.leg-params.leb;
-params.dw = 300;
 
 params.It = mass_moment_inertia_in_yaw(params);
 params.Iw = inertia_moment_at_water_line(params);
-params.vw = displaced_water_volume(params);
+
 
 %%% Forces
 
@@ -104,8 +115,8 @@ params.vw = displaced_water_volume(params);
 %%% khsy : water level hydrostatic stiffness due to side-side-roll [N/rad]
 %%% ktc : cable stiffness due to torsion [N/rad]
 
-forces.kcx = 1.2606e005;
-forces.kcy = 1.2606e005;
+forces.kcx = cable_horizontal_stiffness(params); %not working yet
+forces.kcy = cable_horizontal_stiffness(params); %not working yet
 forces.kcz = 1.2606e005;
 forces.kbz = vertical_stiffness_due_to_buoyancy(params);
 forces.khsx = hydrostatic_stiffness_due_to_fore_aft_roll(params);
