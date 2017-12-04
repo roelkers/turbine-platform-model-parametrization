@@ -93,7 +93,7 @@ params.m0 = 2476400; % mass_whole_turbine(params);
 params.m1 = 5.9605e-008; 
 
 params.vw = displaced_water_volume(params);
-params.lew = water_depth_monopile(params);
+params.lew = 123; % water_depth_monopile(params);
 params.leb = buoyancy_centre(params);
 params.leg = gravity_centre(params);
 
